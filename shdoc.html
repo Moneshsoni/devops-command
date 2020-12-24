@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>shdoc</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/github.css" type="text/css" media="screen" />
+<script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        
+        <h1>
+            shdoc
+        </h1>
+        <ul class="files">
+            <li>shdoc/shdoc</li>
+            <li>Last modified: 2020-12-24 15:19:49 +0530</li>
+        </ul>
+    </div>
+
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>#!/usr/bin/gawk -f</p>
+
+<p>BEGIN {</p>
+
+<pre><code>if (! style) {
+    style = &quot;github&quot;
+}
+
+styles[&quot;github&quot;, &quot;h1&quot;, &quot;from&quot;] = &quot;.*&quot;
+styles[&quot;github&quot;, &quot;h1&quot;, &quot;to&quot;] = &quot;# &amp;&quot;
+
+styles[&quot;github&quot;, &quot;h2&quot;, &quot;from&quot;] = &quot;.*&quot;
+styles[&quot;github&quot;, &quot;h2&quot;, &quot;to&quot;] = &quot;## &amp;&quot;
+
+styles[&quot;github&quot;, &quot;h3&quot;, &quot;from&quot;] = &quot;.*&quot;
+styles[&quot;github&quot;, &quot;h3&quot;, &quot;to&quot;] = &quot;### &amp;&quot;
+
+styles[&quot;github&quot;, &quot;h4&quot;, &quot;from&quot;] = &quot;.*&quot;
+styles[&quot;github&quot;, &quot;h4&quot;, &quot;to&quot;] = &quot;#### &amp;&quot;
+
+styles[&quot;github&quot;, &quot;code&quot;, &quot;from&quot;] = &quot;.*&quot;
+styles[&quot;github&quot;, &quot;code&quot;, &quot;to&quot;] = &quot;```&amp;&quot;
+
+styles[&quot;github&quot;, &quot;/code&quot;, &quot;to&quot;] = &quot;```&quot;
+
+styles[&quot;github&quot;, &quot;argN&quot;, &quot;from&quot;] = &quot;^(\\$[0-9]) (\\S+)&quot;
+styles[&quot;github&quot;, &quot;argN&quot;, &quot;to&quot;] = &quot;**\\1** (\\2):&quot;
+
+styles[&quot;github&quot;, &quot;arg@&quot;, &quot;from&quot;] = &quot;^\\$@ (\\S+)&quot;
+styles[&quot;github&quot;, &quot;arg@&quot;, &quot;to&quot;] = &quot;**...** (\\1):&quot;
+
+styles[&quot;github&quot;, &quot;li&quot;, &quot;from&quot;] = &quot;.*&quot;
+styles[&quot;github&quot;, &quot;li&quot;, &quot;to&quot;] = &quot;* &amp;&quot;
+
+styles[&quot;github&quot;, &quot;i&quot;, &quot;from&quot;] = &quot;.*&quot;
+styles[&quot;github&quot;, &quot;i&quot;, &quot;to&quot;] = &quot;_&amp;_&quot;
+
+styles[&quot;github&quot;, &quot;anchor&quot;, &quot;from&quot;] = &quot;.*&quot;
+styles[&quot;github&quot;, &quot;anchor&quot;, &quot;to&quot;] = &quot;[&amp;](#&amp;)&quot;
+
+styles[&quot;github&quot;, &quot;exitcode&quot;, &quot;from&quot;] = &quot;([&gt;!]?[0-9]{1,3}) (.*)&quot;
+styles[&quot;github&quot;, &quot;exitcode&quot;, &quot;to&quot;] = &quot;**\\1**: \\2&quot;
+
+debug_enable = ENVIRON[&quot;SHDOC_DEBUG&quot;] == &quot;1&quot;
+debug_fd = ENVIRON[&quot;SHDOC_DEBUG_FD&quot;]
+if (!debug_fd) {
+    debug_fd = 2
+}
+debug_file = &quot;/dev/fd/&quot; debug_fd
+</code></pre>
+
+<p>}</p>
+
+<p>function render(type, text) {</p>
+
+<pre><code>return gensub( \
+    styles[style, type, &quot;from&quot;],
+    styles[style, type, &quot;to&quot;],
+    &quot;g&quot;,
+    text \
+)
+</code></pre>
+
+<p>}</p>
+
+<p>function render_toc_link(title) {</p>
+
+<pre><code>url = title
+if (style == &quot;github&quot;) {
+  # https://github.com/jch/html-pipeline/blob/master/lib/html/pipeline/toc_filter.rb#L44-L45
+  url = tolower(url)
+  gsub(/[^[:alnum:] -]/, &quot;&quot;, url)
+  gsub(/ /, &quot;-&quot;, url)
+}
+
+return &quot;[&quot; title &quot;](#&quot; url &quot;)&quot;
+</code></pre>
+
+<p>}</p>
+
+<p>function render_toc_item(title) {</p>
+
+<pre><code>return &quot;* &quot; render_toc_link(title)
+</code></pre>
+
+<p>}</p>
+
+<p>function unindent(text) {</p>
+
+<pre><code>split(text, text_lines, &quot;\n&quot;)
+
+# find a maximum level indent as a starting point
+# find a first non empty line
+start = 0
+max_indent = 0
+for (i = 0; i &lt; length(text_lines); i++) {
+    if (text_lines[i] != &quot;&quot; &amp;&amp; start == 0) {
+        start = i
+    }
+
+    match(text_lines[i], /^[ ]*/)
+    if (RLENGTH &gt; max_indent) {
+        max_indent = RLENGTH
+    }
+}
+
+# find a minimum level of indentation
+indent = max_indent
+for (i = start; i &lt; length(text_lines); i++) {
+    match(text_lines[i], /^[ ]*/)
+    if (RLENGTH &lt; indent) {
+        indent = RLENGTH
+    }
+}
+
+# remove the minimum level of indentation and join text_lines
+for (i = start; i &lt; length(text_lines); i++) {
+    text_lines[i] = substr(text_lines[i], indent + 1)
+    if (i == start) {
+        result = text_lines[i]
+    } else {
+        result = result &quot;\n&quot; text_lines[i]
+    }
+}
+
+return result
+</code></pre>
+
+<p>}</p>
+
+<p>function reset() {</p>
+
+<pre><code>debug(&quot;→ reset()&quot;)
+
+delete docblock
+description = &quot;&quot;
+</code></pre>
+
+<p>}</p>
+
+<p>function handle_description() {</p>
+
+<pre><code>debug(&quot;→ handle_description&quot;)
+if (description == &quot;&quot;) {
+    debug(&quot;→ → description: empty&quot;)
+    return;
+}
+
+if (file_description == &quot;&quot;) {
+    debug(&quot;→ → description: added&quot;)
+    file_description = description
+    return;
+}
+</code></pre>
+
+<p>}</p>
+
+<p>function concat(x, text) {</p>
+
+<pre><code>if (x == &quot;&quot;) {
+    x = text
+} else {
+    x = x &quot;\n&quot; text
+}
+
+return x
+</code></pre>
+
+<p>}</p>
+
+<p>function push(arr, value) {</p>
+
+<pre><code>arr[length(arr)+1] = value
+</code></pre>
+
+<p>}</p>
+
+<p>function join(arr) {</p>
+
+<pre><code>for (i = 0; i &lt; length(lines); i++) {
+    if (i == 0) {
+        result = lines[i]
+    } else {
+        result = result &quot;\n&quot; lines[i]
+    }
+}
+
+return result
+</code></pre>
+
+<p>}</p>
+
+<p>function docblock_set(key, value) {</p>
+
+<pre><code>docblock[key] = value
+</code></pre>
+
+<p>}</p>
+
+<p>function docblock_concat(key, value) {</p>
+
+<pre><code>if (key in docblock) {
+    docblock[key] = concat(docblock[key], value)
+} else {
+    docblock[key] = value
+}
+</code></pre>
+
+<p>}</p>
+
+<p>function docblock_push(key, value) {</p>
+
+<pre><code>docblock[key][length(docblock[key])+1] = value
+</code></pre>
+
+<p>}</p>
+
+<p>function render_docblock(func_name, description, docblock) {</p>
+
+<pre><code>debug(&quot;→ render_docblock&quot;)
+debug(&quot;→ → func_name: [&quot; func_name &quot;]&quot;)
+debug(&quot;→ → description: [&quot; description &quot;]&quot;)
+
+lines[0] = render(&quot;h3&quot;, func_name)
+if (description != &quot;&quot;) {
+    push(lines, description)
+}
+
+if (&quot;example&quot; in docblock) {
+    push(lines, render(&quot;h4&quot;, &quot;Example&quot;))
+    push(lines, &quot;\n&quot; render(&quot;code&quot;, &quot;bash&quot;))
+    push(lines, unindent(docblock[&quot;example&quot;]))
+    push(lines, render(&quot;/code&quot;))
+    push(lines, &quot;&quot;)
+}
+
+if (&quot;arg&quot; in docblock) {
+    push(lines, render(&quot;h4&quot;, &quot;Arguments&quot;) &quot;\n&quot;)
+    for (i in docblock[&quot;arg&quot;]) {
+        item = docblock[&quot;arg&quot;][i]
+        item = render(&quot;argN&quot;, item)
+        item = render(&quot;arg@&quot;, item)
+        item = render(&quot;li&quot;, item)
+        if (i == length(docblock[&quot;arg&quot;])) {
+            item = item &quot;\n&quot;
+        }
+        push(lines, item)
+    }
+}
+
+if (&quot;noargs&quot; in docblock) {
+    push(lines, render(&quot;i&quot;, &quot;Function has no arguments.&quot;) &quot;\n&quot;)
+}
+
+if (&quot;exitcode&quot; in docblock) {
+    push(lines, render(&quot;h4&quot;, &quot;Exit codes&quot;) &quot;\n&quot;)
+    for (i in docblock[&quot;exitcode&quot;]) {
+        item = render(&quot;li&quot;, render(&quot;exitcode&quot;, docblock[&quot;exitcode&quot;][i]))
+        if (i == length(docblock[&quot;exitcode&quot;])) {
+            item = item &quot;\n&quot;
+        }
+        push(lines, item)
+    }
+}
+
+if (&quot;stdout&quot; in docblock) {
+    push(lines, render(&quot;h4&quot;, &quot;Output on stdout&quot;) &quot;\n&quot;)
+    for (i in docblock[&quot;stdout&quot;]) {
+        item = render(&quot;li&quot;, docblock[&quot;stdout&quot;][i])
+        if (i == length(docblock[&quot;stdout&quot;])) {
+            item = item &quot;\n&quot;
+        }
+        push(lines, item)
+    }
+}
+
+if (&quot;see&quot; in docblock) {
+    push(lines, render(&quot;h4&quot;, &quot;See also&quot;) &quot;\n&quot;)
+    for (i in docblock[&quot;see&quot;]) {
+        item = render(&quot;li&quot;, render_toc_link(docblock[&quot;see&quot;][i]))
+        if (i == length(docblock[&quot;see&quot;])) {
+            item = item &quot;\n&quot;
+        }
+        push(lines, item)
+    }
+}
+
+result = join(lines)
+delete lines
+return join(lines)
+</code></pre>
+
+<p>}</p>
+
+<p>function debug(msg) {</p>
+
+<pre><code>if (debug_enable) {
+    print &quot;DEBUG: &quot; msg &gt; debug_file
+}
+</code></pre>
+
+<p>}</p>
+
+<p>{</p>
+
+<pre><code>debug(&quot;line: [&quot; $0 &quot;]&quot;)
+</code></pre>
+
+<p>}</p>
+
+<p>/^[[:space:]]*# @internal/ {</p>
+
+<pre><code>debug(&quot;→ @internal&quot;)
+is_internal = 1
+
+next
+</code></pre>
+
+<p>}</p>
+
+<p>/^[[:space:]]*# @(name|file)/ {</p>
+
+<pre><code>debug(&quot;→ @name|@file&quot;)
+sub(/^[[:space:]]*# @(name|file) /, &quot;&quot;)
+file_title = $0
+
+next
+</code></pre>
+
+<p>}</p>
+
+<p>/^[[:space:]]*# @brief/ {</p>
+
+<pre><code>debug(&quot;→ @brief&quot;)
+sub(/^[[:space:]]*# @brief /, &quot;&quot;)
+file_brief = $0
+
+next
+</code></pre>
+
+<p>}</p>
+
+<p>/^[[:space:]]*# @description/ {</p>
+
+<pre><code>debug(&quot;→ @description&quot;)
+in_description = 1
+in_example = 0
+
+handle_description()
+
+reset()
+</code></pre>
+
+<p>}</p>
+
+<p>in_description {</p>
+
+<pre><code>if (/^[^[[:space:]]*#]|^[[:space:]]*# @[^d]|^[[:space:]]*[^#]|^[[:space:]]*$/) {
+    debug(&quot;→ → in_description: leave&quot;)
+    if (!match(description, /\n$/)) {
+        description = description &quot;\n&quot;
+    }
+
+    in_description = 0
+
+    handle_description()
+} else {
+    debug(&quot;→ → in_description: concat&quot;)
+    sub(/^[[:space:]]*# @description[[:space:]]*/, &quot;&quot;)
+    sub(/^[[:space:]]*#[[:space:]]*/, &quot;&quot;)
+    sub(/^[[:space:]]*#$/, &quot;&quot;)
+
+    description = concat(description, $0)
+    next
+}
+</code></pre>
+
+<p>}</p>
+
+<p>/^[[:space:]]*# @example/ {</p>
+
+<pre><code>debug(&quot;→ @example&quot;)
+
+in_example = 1
+
+next
+</code></pre>
+
+<p>}</p>
+
+<p>in_example {</p>
+
+<pre><code>if (! /^[[:space:]]*#[ ]{1,}/) {
+    debug(&quot;→ → in_example: leave&quot;)
+    in_example = 0
+} else {
+    debug(&quot;→ → in_example: concat&quot;)
+    sub(/^[[:space:]]*#/, &quot;&quot;)
+
+    docblock_concat(&quot;example&quot;, $0)
+    next
+}
+</code></pre>
+
+<p>}</p>
+
+<p>/^[[:space:]]*# @arg/ {</p>
+
+<pre><code>debug(&quot;→ @arg&quot;)
+sub(/^[[:space:]]*# @arg /, &quot;&quot;)
+
+docblock_push(&quot;arg&quot;, $0)
+
+next
+</code></pre>
+
+<p>}</p>
+
+<p>/^[[:space:]]*# @noargs/ {</p>
+
+<pre><code>debug(&quot;→ @noargs&quot;)
+docblock[&quot;noargs&quot;] = 1
+
+next
+</code></pre>
+
+<p>}</p>
+
+<p>/^[[:space:]]*# @exitcode/ {</p>
+
+<pre><code>debug(&quot;→ @exitcode&quot;)
+sub(/^[[:space:]]*# @exitcode /, &quot;&quot;)
+
+docblock_push(&quot;exitcode&quot;, $0)
+
+next
+</code></pre>
+
+<p>}</p>
+
+<p>/^[[:space:]]*# @see/ {</p>
+
+<pre><code>debug(&quot;→ @see&quot;)
+sub(/[[:space:]]*# @see /, &quot;&quot;)
+
+docblock_push(&quot;see&quot;, $0)
+
+next
+</code></pre>
+
+<p>}</p>
+
+<p>/^[[:space:]]*# @stdout/ {</p>
+
+<pre><code>debug(&quot;→ @stdout&quot;)
+
+sub(/^[[:space:]]*# @stdout /, &quot;&quot;)
+
+docblock_push(&quot;stdout&quot;, $0)
+
+next
+</code></pre>
+
+<p>}</p>
+
+<p>/^[ t]*(function([ t])+)?([a-zA-Z0-9_:-]+)([ t]*)((([ t]*)))?[ t]*{/ \</p>
+
+<pre><code>&amp;&amp; (length(docblock) != 0 || description != &quot;&quot;) &amp;&amp; !in_example {
+debug(&quot;→ function&quot;)
+if (is_internal) {
+    debug(&quot;→ → function: it is internal, skip&quot;)
+    is_internal = 0
+} else {
+    debug(&quot;→ → function: register&quot;)
+
+    is_internal = 0
+    func_name = gensub(\
+        /^[ \t]*(function([ \t])+)?([a-zA-Z0-9_:-]+)[ \t]*\(.*/, \
+        &quot;\\3()&quot;, \
+        &quot;g&quot; \
+    )
+
+    doc = concat(doc, render_docblock(func_name, description, docblock))
+    toc = concat(toc, render_toc_item(func_name))
+}
+
+reset()
+next
+</code></pre>
+
+<p>}</p>
+
+<p>/^[^#]*$/ {</p>
+
+<pre><code>debug(&quot;→ break&quot;)
+handle_description();
+reset()
+next
+</code></pre>
+
+<p>}</p>
+
+<p>{</p>
+
+<pre><code>debug(&quot;→ NOT HANDLED&quot;)
+</code></pre>
+
+<p>}</p>
+
+<p>END {</p>
+
+<pre><code>debug(&quot;→ END {&quot;)
+debug(&quot;→ → file_title:       [&quot; file_title &quot;]&quot;)
+debug(&quot;→ → file_brief:       [&quot; file_brief &quot;]&quot;)
+debug(&quot;→ → file_description: [&quot; file_description &quot;]&quot;)
+debug(&quot;→ END }&quot;)
+
+if (file_title != &quot;&quot;) {
+    print render(&quot;h1&quot;, file_title)
+
+    if (file_brief != &quot;&quot;) {
+        print &quot;\n&quot; file_brief
+    }
+
+    if (file_description != &quot;&quot;) {
+        print &quot;\n&quot; render(&quot;h2&quot;, &quot;Overview&quot;)
+        print &quot;\n&quot; file_description
+    }
+}
+
+if (toc != &quot;&quot;) {
+    print render(&quot;h2&quot;, &quot;Index&quot;) &quot;\n&quot;
+    print toc
+}
+
+print &quot;\n&quot; doc
+
+## TODO: add examples section
+</code></pre>
+
+<p>}</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+    
+    
+    
+  
+</div>
+
+    </div>
+  </body>
+</html>

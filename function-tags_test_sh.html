@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>function-tags.test.sh</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        
+        <h1>
+            function-tags.test.sh
+        </h1>
+        <ul class="files">
+            <li>shdoc/tests/testcases/function-tags.test.sh</li>
+            <li>Last modified: 2020-12-24 15:19:49 +0530</li>
+        </ul>
+    </div>
+
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>#!/bin/bash</p>
+
+<p>tests:put input &lt;&lt;EOF # @description Multiline description goes here
+and # there # # @example #   some:other:func a b c #   echo 123 # # @arg $1
+string Some arg. # @arg $@ any Rest of arguments. # # @noargs # # @exitcode
+0  If successfull. # @exitcode &gt;0 On failure # @exitcode 5  On some
+error. # # @stdout Path to something. # # @see some:other:func()
+some:first:func() { EOF</p>
+
+<p>tests:put expected &lt;&lt;EOF ## Index</p>
+<ul><li>
+<p>[some:first:func()](#somefirstfunc)</p>
+</li></ul>
+
+<p>### some:first:func()</p>
+
+<p>Multiline description goes here and there</p>
+
+<p>#### Example</p>
+
+<p>```bash some:other:func a b c echo 123 ```</p>
+
+<p>#### Arguments</p>
+<ul><li>
+<p>**$1** (string): Some arg.</p>
+</li><li>
+<p>*<strong>…</strong>* (any): Rest of arguments.</p>
+</li></ul>
+
+<p>_Function has no arguments._</p>
+
+<p>#### Exit codes</p>
+<ul><li>
+<p>*<strong>0*</strong>:  If successfull.</p>
+</li><li>
+<p>**&gt;0**: On failure</p>
+</li><li>
+<p>*<strong>5*</strong>:  On some error.</p>
+</li></ul>
+
+<p>#### Output on stdout</p>
+<ul><li>
+<p>Path to something.</p>
+</li></ul>
+
+<p>#### See also</p>
+<ul><li>
+<p>[some:other:func()](#someotherfunc)</p>
+</li></ul>
+
+<p>EOF</p>
+
+<p>assert</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+    
+    
+    
+  
+</div>
+
+    </div>
+  </body>
+</html>

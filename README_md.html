@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>README.md</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/github.css" type="text/css" media="screen" />
+<script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        
+        <h1>
+            README.md
+        </h1>
+        <ul class="files">
+            <li>shdoc/README.md</li>
+            <li>Last modified: 2020-12-24 15:19:49 +0530</li>
+        </ul>
+    </div>
+
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<h1 id="label-shdoc">shdoc</h1>
+
+<p>shdoc is a documentation generator for bash/zsh/sh for generating API
+documentation in Markdown from shell scripts source.</p>
+
+<p>shdoc parses <a href="#features">annotations</a> in the beginning of a
+given file and alongside function definitions, and creates a markdown file
+with ready to use documentation.</p>
+
+<h2 id="label-Index">Index</h2>
+<ul><li>
+<p><a href="#example">Example</a></p>
+</li><li>
+<p><a href="#annotations">Annotations</a></p>
+</li><li>
+<p><a href="#usage">Usage</a></p>
+</li><li>
+<p><a href="#installation">Installation</a></p>
+</li><li>
+<p><a href="#examples">More examples</a></p>
+</li><li>
+<p><a href="#license">License</a></p>
+</li></ul>
+
+<h2 id="label-Example">Example</h2>
+<table border="0">
+ <tr>
+    <td style="vertical-align: top">
+
+Generate documentation with the following command:
+~~~bash
+$ shdoc < lib.sh > doc.md
+~~~
+
+_Source_ [examples/readme-example.sh](examples/readme-example.sh)<br />
+_Output_: [examples/readme-example.md](examples/readme-example.md)<br/><br/>
+~~~bash
+#!/bin/bash
+# @file libexample
+# @brief A library that solves some common problems.
+# @description
+#     The project solves lots of problems:
+#      * a
+#      * b
+#      * c
+#      * etc
+
+# @description My super function.
+# Not thread-safe.
+#
+# @example
+#    echo "test: $(say-hello World)"
+#
+# @arg $1 string A value to print
+#
+# @exitcode 0 If successful.
+# @exitcode 1 If an empty string passed.
+#
+# @see validate()
+say-hello() {
+    if [[ ! "$1" ]]; then
+        return 1;
+    fi
+
+    echo "Hello $1"
+}
+~~~
+
+
+</td>
+<td>
+
+~~~markdown
+# libexample
+
+A library that solves some common problems.
+
+## Overview
+
+The project solves lots of problems:
+* a
+* b
+* c
+* etc
+
+## Index
+
+* [say-hello()](#say-hello)
+
+### say-hello()
+
+My super function.
+Not thread-safe.
+
+#### Example
+
+```bash
+echo "test: $(say-hello World)"
+```
+
+#### Arguments
+
+* **$1** (string): A value to print
+
+#### Exit codes
+
+* **0**: If successful.
+* **1**: If an empty string passed.
+
+#### See also
+
+* [validate()](#validate)
+~~~
+
+</td>
+</tr></table>
+<h2 id="label-Features">Features</h2>
+
+<h3 id="label-40name"><code>@name</code></h3>
+
+<p>A name of the project, used as a title of the doc. Can be specified once in
+the beginning of the file.</p>
+
+<p><strong>Example</strong></p>
+
+<pre><code>#!/bin/bash
+# @name MyLibrary
+</code></pre>
+
+<h3 id="label-40brief"><code>@brief</code></h3>
+
+<p>A brief line about the project. Can be specified once in the beginning of
+the file.<br></p>
+
+<p><strong>Example</strong> <code>bash #!/bin/bash # @brief A library to solve
+a few problems. </code></p>
+
+<h3 id="label-40description"><code>@description</code></h3>
+
+<p>A multiline description of the project/function. * Can be specified once
+for the whole file in the begibeginning of the file. * Can be specified
+once for on top of a function definition.</p>
+
+<p><strong>Example</strong> “`bash</p>
+
+<h1 id="label-21-2Fbin-2Fbash">!/bin/bash</h1>
+
+<h1 id="label-40description+A+long+description+of+the+library.">@description A long description of the library.</h1>
+
+<h1 id="label-Second+line+of+the+project+description.">Second line of the project description.</h1>
+
+<h1 id="label-40description+My+super+function.">@description My super function.</h1>
+
+<h1 id="label-Second+line+of+my+super+function+description.">Second line of my super function description.</h1>
+
+<p>function super() {  … } “`</p>
+
+<h3 id="label-40example"><code>@example</code></h3>
+
+<p>A multiline example of the function usage. Can be specified only alongside
+the function definition.</p>
+
+<p><strong>Example</strong> <code>bash # @example #    echo &quot;test:
+$(say-hello World)&quot; say-hello() {     ... } </code></p>
+
+<h3 id="label-40arg"><code>@arg</code></h3>
+
+<p>A description of an argument expected to be passed while calling the
+function. Can be specified multiple times to describe any number of
+arguments.</p>
+
+<p><strong>Example</strong> <code>bash # @description Says hi to a given
+person. # @arg $1 string A person&#39;s name. # @arg $2 string Message
+priority. say-hello() {     ... } </code></p>
+
+<h3 id="label-40noargs"><code>@noargs</code></h3>
+
+<p>A note that the function does not expect any arguments to be passed.</p>
+
+<p><strong>Example</strong> <code>bash # @description Says &#39;hello
+world&#39;. # @noargs say-hello-world() {     ... } </code></p>
+
+<h3 id="label-40exitcode"><code>@exitcode</code></h3>
+
+<p>Describes an expected exitcode of the function. Can be specified multiple
+times to describe all possible exitcodes and their conditions.</p>
+
+<p><strong>Example</strong> <code>bash # @description Says &#39;hello
+world&#39;. # @exitcode 0 If successful. # @exitcode 1 If world is gone.
+say-hello-world() {     ... } </code></p>
+
+<h3 id="label-40stdout"><code>@stdout</code></h3>
+
+<p>An expected output of the function call.</p>
+
+<p><strong>Example</strong> <code>bash # @description Says &#39;hello
+world&#39;. # @stdout A path to a temporary file with the message.
+say-hello-world() {     ... } </code></p>
+
+<h3 id="label-40see"><code>@see</code></h3>
+
+<p>Create a link on the given function in the See Also section.</p>
+
+<p><strong>Example</strong> <code>bash # @see say-hello say-hello-world() {   
+... } </code></p>
+
+<h3 id="label-40internal"><code>@internal</code></h3>
+
+<p>When you want to skip documentation generation for a particular function,
+you can specify this <code>@internal</code> tag. It allows you to have the
+same style of doc comments across the script and keep internal functions
+hidden from users.</p>
+
+<p><strong>Example</strong> <code>bash # @internal show-msg() {     ... }
+</code></p>
+
+<h2 id="label-Usage">Usage</h2>
+
+<p>shdoc has no args and expects a shell script with comments on stdin and
+will produce markdown as stdout.</p>
+
+<pre><code>$ shdoc &lt; your-shell-script.sh &gt; doc.md
+</code></pre>
+
+<h2 id="label-Installation">Installation</h2>
+
+<h3 id="label-Arch+Linux">Arch Linux</h3>
+
+<p>Arch Linux users can install shdoc using package in AUR: <a
+href="https://aur.archlinux.org/packages/shdoc-git">shdoc-git</a></p>
+
+<h3 id="label-Using+Git">Using Git</h3>
+
+<p>NOTE: shdoc requires gawk: <code>apt-get install gawk</code></p>
+
+<pre><code>git clone --recursive https://github.com/reconquest/shdoc
+cd shdoc
+sudo make install
+</code></pre>
+
+<h3 id="label-Others">Others</h3>
+
+<p>Unfortunately, there are no packages of shdoc for other distros, but
+we&#39;re looking for contributions.</p>
+
+<h2 id="label-Examples">Examples</h2>
+
+<p>See example documentation on:</p>
+<ul><li>
+<p><a
+href="https://github.com/reconquest/tests.sh/blob/master/REFERENCE.md">tests.sh</a></p>
+</li><li>
+<p><a
+href="https://github.com/reconquest/coproc.bash/blob/master/REFERENCE.md">coproc.bash</a></p>
+</li></ul>
+
+<h1 id="label-LICENSE"><a href="LICENSE.html">LICENSE</a></h1>
+
+<p>MIT</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+    
+    
+    
+  
+</div>
+
+    </div>
+  </body>
+</html>

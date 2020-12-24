@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>issue-4-whitespace-in-function-declaration.test.sh</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        
+        <h1>
+            issue-4-whitespace-in-function-declaration.test.sh
+        </h1>
+        <ul class="files">
+            <li>shdoc/tests/testcases/issue-4-whitespace-in-function-declaration.test.sh</li>
+            <li>Last modified: 2020-12-24 15:19:49 +0530</li>
+        </ul>
+    </div>
+
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>#!/bin/bash</p>
+
+<p>tests:put input &lt;&lt;EOF #!/bin/bash</p>
+
+<p># @arg $1 string fn var. # @stdout result of fn function fn() {</p>
+
+<pre><code>do fn
+</code></pre>
+
+<p>}</p>
+
+<p># @arg $1 string spaces var. # @stdout result of spaces function   spaces()
+{</p>
+
+<pre><code>do spaces
+</code></pre>
+
+<p>}</p>
+
+<p># @arg $1 string tab1 var. # @stdout result of tab1 function        tab1()
+{</p>
+
+<pre><code>do tab1
+</code></pre>
+
+<p>}</p>
+
+<p># @arg $1 string tab2 var. # @stdout result of tab2 function        tab2() 
+{</p>
+
+<pre><code>do tab2
+</code></pre>
+
+<p>}</p>
+
+<p># @arg $1 string tab3 var. # @stdout result of tab3 function        tab3() 
+{</p>
+
+<pre><code>do tab3
+</code></pre>
+
+<p>}</p>
+
+<p># @arg $1 string tab4 var. # @stdout result of tab4 function        tab4   
+()      {</p>
+
+<pre><code>do tab4
+</code></pre>
+
+<p>} EOF</p>
+
+<p>tests:put expected &lt;&lt;EOF ## Index</p>
+<ul><li>
+<p>[fn()](#fn)</p>
+</li><li>
+<p>[spaces()](#spaces)</p>
+</li><li>
+<p>[tab1()](#tab1)</p>
+</li><li>
+<p>[tab2()](#tab2)</p>
+</li><li>
+<p>[tab3()](#tab3)</p>
+</li><li>
+<p>[tab4()](#tab4)</p>
+</li></ul>
+
+<p>### fn()</p>
+
+<p>#### Arguments</p>
+<ul><li>
+<p>**$1** (string): fn var.</p>
+</li></ul>
+
+<p>#### Output on stdout</p>
+<ul><li>
+<p>result of fn</p>
+</li></ul>
+
+<p>### spaces()</p>
+
+<p>#### Arguments</p>
+<ul><li>
+<p>**$1** (string): spaces var.</p>
+</li></ul>
+
+<p>#### Output on stdout</p>
+<ul><li>
+<p>result of spaces</p>
+</li></ul>
+
+<p>### tab1()</p>
+
+<p>#### Arguments</p>
+<ul><li>
+<p>**$1** (string): tab1 var.</p>
+</li></ul>
+
+<p>#### Output on stdout</p>
+<ul><li>
+<p>result of tab1</p>
+</li></ul>
+
+<p>### tab2()</p>
+
+<p>#### Arguments</p>
+<ul><li>
+<p>**$1** (string): tab2 var.</p>
+</li></ul>
+
+<p>#### Output on stdout</p>
+<ul><li>
+<p>result of tab2</p>
+</li></ul>
+
+<p>### tab3()</p>
+
+<p>#### Arguments</p>
+<ul><li>
+<p>**$1** (string): tab3 var.</p>
+</li></ul>
+
+<p>#### Output on stdout</p>
+<ul><li>
+<p>result of tab3</p>
+</li></ul>
+
+<p>### tab4()</p>
+
+<p>#### Arguments</p>
+<ul><li>
+<p>**$1** (string): tab4 var.</p>
+</li></ul>
+
+<p>#### Output on stdout</p>
+<ul><li>
+<p>result of tab4</p>
+</li></ul>
+
+<p>EOF</p>
+
+<p>assert</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+    
+    
+    
+  
+</div>
+
+    </div>
+  </body>
+</html>
